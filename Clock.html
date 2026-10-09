@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style5.css">
+    <title>Digital Clock</title>
+</head>
+<body>
+
+    <!-- Wrap buttons inside this header container -->
+    <div class="control-header">
+        <button id="format-btn">Switch to 24H</button>
+        <button id="theme-btn">Dark Mode</button>
+    </div>
+
+    <div class="clock-container">
+        <h1 id="clock-display">00:00:00</h1>
+    </div>
+
+    <script>const clockDisplay = document.getElementById("clock-display");
+const themeBtn = document.getElementById("theme-btn");
+const formatBtn = document.getElementById("format-btn");
+
+let is12Hour = localStorage.getItem("clockFormat") !== "24H";
+
+const updateClock = () => {
+    const now = new Date();
+  
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+    let timeString = "";
+
+    if (is12Hour) {
+        const amPm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        if (hours === 0) hours = 12;
+
+        if (hours < 10) hours = "0" + hours;
+        if (minutes < 10) minutes = "0" + minutes;
+        if (seconds < 10) seconds = "0" + seconds;
+
+        timeString = `${hours}:${minutes}:${seconds} ${amPm}`;
+    } else {
+        if (hours < 10) hours = "0" + hours;
+        if (minutes < 10) minutes = "0" + minutes;
+        if (seconds < 10) seconds = "0" + seconds;
+
+        timeString = `${hours}:${minutes}:${seconds}`;
+    }
+
+    if (clockDisplay) {
+        clockDisplay.innerText = timeString;
+    }
+};
+
+if (formatBtn) {
+    formatBtn.addEventListener("click", () => {
+        is12Hour = !is12Hour; 
+        localStorage.setItem("clockFormat", is12Hour ? "12H" : "24H");
+        formatBtn.innerText = is12Hour ? "Switch to 24H" : "Switch to 12H";
+        updateClock(); 
+    });
+}
+
+if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+        document.body.classList.toggle("dark-theme");
+        const isDark = document.body.classList.contains("dark-theme");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        themeBtn.innerText = isDark ? "Light Mode" : "Dark Mode";
+    });
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+if (formatBtn) {
+    formatBtn.innerText = is12Hour ? "Switch to 24H" : "Switch to 12H";
+}
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark-theme");
+    if (themeBtn) {
+        themeBtn.innerText = "Light Mode";
+    }
+}
+</script>
+</body>
+</html>
